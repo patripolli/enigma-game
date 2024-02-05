@@ -1,3 +1,12 @@
+import numpy as np
+import random as random
+!pip install PyDictionary
+from random import choices
+from numpy import matrix
+from PyDictionary import PyDictionary
+dictionary=PyDictionary()
+np.set_printoptions(threshold=np.inf)
+
 #Some variables and mapping for later
 wavez = ["^", "~", "-"]
 letterdict = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 'I':8, 'J':9, 'K':10,
@@ -57,12 +66,11 @@ checkedword = word_check()
 def coordinates(word = checkedword):
       sizecheck = 0
       lencheck = 0
-      vertfit = False
-      horizfit = False
+
       
       
       #Transform str coordinates to int-int and -1 to reflect actual array positions
-      while vertfit == False and horizfit == False:
+      while lencheck < 2:
         while sizecheck < 2:
             rawcoord = []
             firstsquare = input(f"Enter the starting coordinate (e.g. F6):\n").upper()
@@ -92,24 +100,26 @@ def coordinates(word = checkedword):
 
         #Horizontal and Vertical fit checks
         if vwc <= len(board):
-          vertfit = True
+          lencheck += 1
         if vwc > len(board):
           diff = (vertcoord + len(word)) - len(board)
           orient = "up"
 
         if hwc <= len(board):
-          horizfit = True
+          lencheck += 1
         if hwc > len(board):  
           diff = (horizontcoord + len(word)) - len(board)
           orient = "to the left"
-        if vertfit == False or horizfit == False:
+        if lencheck < 2:
           lencheck = 0
           sizecheck = 0
           print (f"Those coordinates won't fit the word. Move at least {diff} spaces {orient}.")
-
+          print (f"vert = {vertcoord}, horizont = {horizontcoord}")
       return vertcoord, horizontcoord
 
 vertcoord, horizontcoord = coordinates()
+
+print (vertcoord, horizontcoord)
 
 
 #Place the word in the board
@@ -131,3 +141,7 @@ def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord)
 
 
 actualy_place()
+
+
+
+
