@@ -1,13 +1,3 @@
-#importing tools, packages, dependencies...
-import numpy as np
-import random as random
-!pip install PyDictionary
-from random import choices
-from numpy import matrix
-from PyDictionary import PyDictionary
-dictionary=PyDictionary()
-np.set_printoptions(threshold=np.inf)
-
 #Some variables and mapping for later
 wavez = ["^", "~", "-"]
 letterdict = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 'I':8, 'J':9, 'K':10,
@@ -39,6 +29,8 @@ def new_board():
           board[i][h] = choices(wavez)[0]
     return board
 
+board = new_board()
+
 #Function to check if the word is in the English dictionary and whether it fits the board
 def word_check(word = ''):
     word = input(f"Enter the word you’d like to add to the board:\n").title()
@@ -58,50 +50,67 @@ def word_check(word = ''):
         word = input(f"Enter the word you’d like to add to the board:\n").title()
     return valword
 
+checkedword = word_check()
+
+
 #Set coordinates for word
 def coordinates(word = checkedword):
       sizecheck = 0
       lencheck = 0
+      vertfit = False
+      horizfit = False
       
-      rawcoord = []
+      
       #Transform str coordinates to int-int and -1 to reflect actual array positions
-      while lencheck == 0:
+      while vertfit == False and horizfit == False:
         while sizecheck < 2:
-          firstsquare = input(f"Enter the starting coordinate (e.g. F6):\n").upper()
-          for i in firstsquare:
-            rawcoord.append(i)
-          #Check if the coordinates are within the board
-          try:
-            vertcoord = letterdict.get(rawcoord[0])
-            if vertcoord <= len(board):
+            rawcoord = []
+            firstsquare = input(f"Enter the starting coordinate (e.g. F6):\n").upper()
+            for i in firstsquare:
+              rawcoord.append(i)
+
+            #Check if the coordinates are within the board
+            try:
+              vertcoord = letterdict.get(rawcoord[0])
+              if vertcoord <= len(board):
+                vwc = vertcoord + len(word)
+                sizecheck += 1
+            except:
+              sizecheck += 0
+
+            try:
+              horizontcoord = (int(''.join(rawcoord[1:3])))-1
+              if horizontcoord <= len(board):
+                hwc = horizontcoord + len(word)
+                sizecheck += 1
+            except:
               sizecheck += 1
-          except:
-            sizecheck += 0
 
-          try:
-            horizontcoord = (int(''.join(rawcoord[1:3])))-1
-            if horizontcoord <= len(board):
-              sizecheck += 1
-          except:
-            sizecheck += 1
+            if sizecheck < 2:
+              print ("Invalid board coordinates.")
+              sizecheck = 0
 
-          if sizecheck < 2:
-            print ("Invalid board coordinates.")
-            sizecheck = 0
-          
-          vwc = vertcoord + len(word)
-          hwc = horizontcoord + len(word)
+        #Horizontal and Vertical fit checks
+        if vwc <= len(board):
+          vertfit = True
+        if vwc > len(board):
+          diff = (vertcoord + len(word)) - len(board)
+          orient = "up"
 
-        #Check if the word will fit in those coords ##HELP WHY DOESN'T THIS WORK???
-        if (vwc > len(board)) or (hwc > len(board)):
-          lencheck += 1
-          
-        else:
+        if hwc <= len(board):
+          horizfit = True
+        if hwc > len(board):  
+          diff = (horizontcoord + len(word)) - len(board)
+          orient = "to the left"
+        if vertfit == False or horizfit == False:
           lencheck = 0
           sizecheck = 0
-          print ("Those coordinates won't fit the word.")
-      
+          print (f"Those coordinates won't fit the word. Move at least {diff} spaces {orient}.")
+
       return vertcoord, horizontcoord
+
+vertcoord, horizontcoord = coordinates()
+
 
 #Place the word in the board
 def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord):
@@ -121,11 +130,4 @@ def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord)
     return board
 
 
-board = new_board()
-checkedword = word_check()
-vertcoord, horizontcoord = coordinates()
 actualy_place()
-
-
-
-
