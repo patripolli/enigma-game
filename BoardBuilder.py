@@ -15,14 +15,16 @@ letterdict = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 'I':8, 'J'
 numberdict = {0:'A', 1:'B', 2:'C', 3:'D', 4: 'E', 5:'F', 6:'G', 7:'H', 8:'I', 9:'J', 10:'K',
               11:'L', 12:'M', 13:'N', 14:'O', 15:'P', 16:'Q', 17:'R', 18:'S', 19:'T', 20:'U',
               21:'V', 22:'W', 23:'X', 24:'Y', 25:'Z'}
-checkedword = ''
+
+P1letterlist = []
+NPCletterlist = []
 
 #This is the function to build the board.
 def new_board():
     board_size = 0
     #Set board size, insists until a valid input
     while board_size == 0:
-      size = str(input("Please enter S / M / L for board size\n")).upper()
+      size = str(input("Please enter S (8 spaces) / M (10 spaces) / L (12 spaces) for board size\n")).upper()
       if size == "S":
           board_size = 8
       if size == "M":
@@ -39,9 +41,12 @@ def new_board():
     return board
 
 board = new_board()
+mask = board.copy()
+masknpc = mask.copy
+
 
 #Function to check if the word is in the English dictionary and whether it fits the board
-def word_check(word = ''):
+def word_check(board):
     word = input(f"Enter the word you’d like to add to the board:\n").title()
     while len(word) < 2:
       print ("One letter words are not allowed. Please enter a word with 2 or more letters.")
@@ -59,21 +64,19 @@ def word_check(word = ''):
         word = input(f"Enter the word you’d like to add to the board:\n").title()
     return valword
 
-checkedword = word_check()
-
 
 #Set coordinates for word
-def coordinates(word = checkedword):
+def coordinates(word, board):
       sizecheck = 0
-      lencheck = 0
+      lencheck = False
 
-      
-      
       #Transform str coordinates to int-int and -1 to reflect actual array positions
-      while lencheck < 2:
+      while lencheck == False:
         while sizecheck < 2:
             rawcoord = []
-            firstsquare = input(f"Enter the starting coordinate (e.g. F6):\n").upper()
+            firstsquare = input(f"Enter the starting coordinate and orientation (V or H, default is H). E.g. A12V:\n").upper()
+            if len(firstsquare) <3:
+              firstsquare = firstsquare + 'H'
             for i in firstsquare:
               rawcoord.append(i)
 
@@ -87,48 +90,54 @@ def coordinates(word = checkedword):
               sizecheck += 0
 
             try:
-              horizontcoord = (int(''.join(rawcoord[1:3])))-1
+              horizontcoord = (int(''.join(rawcoord[1:-1])))-1
               if horizontcoord <= len(board):
                 hwc = horizontcoord + len(word)
                 sizecheck += 1
             except:
+              sizecheck += 0
+
+            orient = str(rawcoord[-1].upper())
+            if orient == "V":
+              sizecheck += 1
+            else:
+              orient = "H"
               sizecheck += 1
 
-            if sizecheck < 2:
+            if sizecheck < 3:
               print ("Invalid board coordinates.")
               sizecheck = 0
 
         #Horizontal and Vertical fit checks
-        if vwc <= len(board):
-          lencheck += 1
-        if vwc > len(board):
-          diff = (vertcoord + len(word)) - len(board)
-          orient = "up"
+        if orient == "V":
+          if vwc <= len(board):
+            lencheck = True
+          if vwc > len(board):
+            diff = (vertcoord + len(word)) - len(board)
+            guide = "up"
 
-        if hwc <= len(board):
-          lencheck += 1
-        if hwc > len(board):  
-          diff = (horizontcoord + len(word)) - len(board)
-          orient = "to the left"
-        if lencheck < 2:
+        if orient == "H":
+          if hwc <= len(board):
+            lencheck = True
+          if hwc > len(board):
+            diff = (horizontcoord + len(word)) - len(board)
+            guide = "to the left"
+
+        if lencheck == False:
           lencheck = 0
           sizecheck = 0
-          print (f"Those coordinates won't fit the word. Move at least {diff} spaces {orient}.")
-          print (f"vert = {vertcoord}, horizont = {horizontcoord}")
-      return vertcoord, horizontcoord
+          print (f"Those coordinates won't fit the word. Move at least {diff} spaces {guide}.")
 
-vertcoord, horizontcoord = coordinates()
-
-print (vertcoord, horizontcoord)
+      return vertcoord, horizontcoord, orient
 
 
 #Place the word in the board
-def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord):
-    orientation = input(f"Enter the word orientation (V for vertical, H for horizontal). The default is Horizontal:\n").upper()
+def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord, orientation=orient):
     charlist = []
     for i in word:
         charlist.append(i.upper())
     #Set orientation and place
+
     if orientation == 'V':
       for i in charlist:
         board[vc][hc] = i
@@ -139,37 +148,49 @@ def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord)
         hc += 1
     return board
 
+#Place word entire routine
+def place_word():
+    checkedword = word_check(board)
+    vertcoord, horizontcoord, orient = coordinates(checkedword, board)
+    actualy_place(checkedword, board, vertcoord, horizontcoord, orient)
+    return board
 
-actualy_place()
+  place_word()
 
-def play_letter(maskboard=mask):
+
+def play_letter(maskboard):
+  fullcoord = ''
   fullcheck = 0
   hits = 0
   rights = 0
   locations = []
   while fullcheck < 1:
-    fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+    while len(fullcoord) < 3:
+      fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+      if len(fullcoord) < 3:
+        print("Invalid play.")
     letterrow = fullcoord.upper().split("IN")
     print (letterrow)
     boardletter, rowcolumn = letterrow[0], letterrow[1]
+    print(boardletter, rowcolumn)
     if boardletter in letterdict:
       fullcheck += 1
-      print (f"check: {fullcheck}")
+      print (f"letter check: {fullcheck}")
     else:
       fullcheck = 0
       print ("Invalid character. Please choose a letter from the English alphabet.")
     try:
-      int(letterrow[1])
+      rowcolumn = int(rowcolumn)
       if rowcolumn in numberdict:
         fullcheck += 1
-        print (f"check: {fullcheck}")
+        print (f"coord check: {fullcheck}")
       else:
         fullcheck = 0
         print ("Invalid column.")
     except:
       if rowcolumn in letterdict:
         fullcheck += 1
-        print (f"check: {fullcheck}")
+        print (f"coord check: {fullcheck}")
       else: 
         fullcheck = 0
         print ("Invalid row.")
@@ -192,13 +213,21 @@ def play_letter(maskboard=mask):
 
 
   elif type(rowcolumn) == int:
-    print ("nice")
-  
-
+    column = rowcolumn-1
+    for i in range(len(board)):
+      if board[i][column] == mask[i][column]:
+        continue
+      elif board[i][column] in wavez:
+        continue
+      else:
+        mask[i][column] = '?'
+        hits += 1
+        if board[i][column] == boardletter:
+          mask[i][column] = boardletter
+          print (f"You hit '{boardletter}' in {numberdict.get(i)}{rowcolumn}!")
+        else:
+          print (f"There's something in {numberdict.get(i)}{rowcolumn}.")
 
   return mask
       
-play_letter()
-
-
-
+play_letter(mask)
