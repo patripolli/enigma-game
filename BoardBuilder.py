@@ -142,6 +142,63 @@ def actualy_place(word=checkedword, board=board, vc=vertcoord, hc=horizontcoord)
 
 actualy_place()
 
+def play_letter(maskboard=mask):
+  fullcheck = 0
+  hits = 0
+  rights = 0
+  locations = []
+  while fullcheck < 1:
+    fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+    letterrow = fullcoord.upper().split("IN")
+    print (letterrow)
+    boardletter, rowcolumn = letterrow[0], letterrow[1]
+    if boardletter in letterdict:
+      fullcheck += 1
+      print (f"check: {fullcheck}")
+    else:
+      fullcheck = 0
+      print ("Invalid character. Please choose a letter from the English alphabet.")
+    try:
+      int(letterrow[1])
+      if rowcolumn in numberdict:
+        fullcheck += 1
+        print (f"check: {fullcheck}")
+      else:
+        fullcheck = 0
+        print ("Invalid column.")
+    except:
+      if rowcolumn in letterdict:
+        fullcheck += 1
+        print (f"check: {fullcheck}")
+      else: 
+        fullcheck = 0
+        print ("Invalid row.")
+
+  if type(rowcolumn) == str:
+    row = letterdict.get(rowcolumn)
+    for i in range(len(board)):
+      if board[row][i] == mask[row][i]:
+        continue
+      elif board[row][i] in wavez:
+        continue
+      else:
+        mask[row][i] = '?'
+        hits += 1
+        if board[row][i] == boardletter:
+          mask[row][i] = boardletter
+          print (f"You hit '{boardletter}' in {rowcolumn}{i}!")
+        else:
+          print (f"There's something in {rowcolumn}{i}.")
+
+
+  elif type(rowcolumn) == int:
+    print ("nice")
+  
+
+
+  return mask
+      
+play_letter()
 
 
 
