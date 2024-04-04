@@ -3,6 +3,8 @@ import numpy as np
 import random as random
 import re
 !pip install PyDictionary
+from BoardBuilder import *
+from Players import *
 from random import choices
 from numpy import matrix
 from PyDictionary import PyDictionary
