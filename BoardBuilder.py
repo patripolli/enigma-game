@@ -17,7 +17,7 @@ def new_board():
     board_size = 0
     #Set board size, insists until a valid input
     while board_size == 0:
-      size = str(input("Please choose a board size:\nS: 8x8 spaces / 4 words / 16 turns\nM: 10x10 spaces / 5 words / 20 turns\nL: 12x12 spaces / 6 words / 24 turns\n")).upper()
+      size = str(input("Please choose a board size:\nS: 8x8 spaces / 4 words\nM: 10x10 spaces / 5 words\nL: 12x12 spaces / 6 words\n")).upper()
       if size == "S":
           board_size = 8
       if size == "M":
@@ -32,3 +32,24 @@ def new_board():
         for h in range(board_size):
           board[i][h] = choices(wavez)[0]
     return board, board_size, size
+
+
+def board_formatter(board):
+  separator1 = ' | '
+  separator2 = ' |'
+  separator3 = '   '
+  line_break = f'\n  '+('—'*(len(board)*4))+' \n'
+  square = ''
+  first_line = '    '
+  for i in range(len(board)):
+    square = str(i)
+    first_line += square+separator3
+  formatted_board = first_line + line_break
+  for i in range(len(board)):
+    next_line = numberdict.get(i) + separator1
+    for b in range(len(board)):
+      square = board[i][b]
+      next_line += square + separator1
+    formatted_board += next_line + line_break
+  return formatted_board
+
