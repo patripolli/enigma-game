@@ -42,7 +42,7 @@ def board_formatter(board):
   square = ''
   first_line = '    '
   for i in range(len(board)):
-    square = str(i)
+    square = str(i+1)
     first_line += square+separator3
   formatted_board = first_line + line_break
   for i in range(len(board)):
