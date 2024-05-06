@@ -65,6 +65,12 @@ def set_board_words():
 
 ##----------START MATCH----------------
 
-
-
+def start_match():
+  print(f'\nStarting enemy intelligence decryption.\n----------------------------------------------------------------------------------\n')
+  while p1.score < diff_score[size] or npc.score < diff_score[size]:
+    print(f'Your turn.')
+    player_turn(p1, p1.score, p1.turn_score, p1.rowcol_moves, npc.mask, p1.plays_list, npc.board, p1.hits, size)
+    print(f'----------------------------------------------------------------------------------\nEnemy Turn.')
+    npc_turn(npc, npc.score, npc.turn_score, npc.rowcol_moves, p1.mask, npc.plays_list, p1.board, npc.hits, size)
+    print(board_formatterv2(p1.mask, npc.mask, p1, npc))
 
