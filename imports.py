@@ -1,4 +1,5 @@
 ##----------------IMPORTS----------------
+#tools, packages, dependencies, word files...
 !pip install PyDictionary
 !pip install seaborn
 import random as random
@@ -14,3 +15,4 @@ from numpy import matrix
 from PyDictionary import PyDictionary
 dictionary=PyDictionary()
 np.set_printoptions(threshold=np.inf)
+beginnerwords_file = "beginnerwords.txt"
