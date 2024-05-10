@@ -56,6 +56,7 @@ print(f'Parameters Ready.\n-----------------------------------------------------
 
 ##----------------SET BOARD WORDS/COORDS----------------
 while words_ready is False:
+  print(f'This is your board: {single_board_formatter(p1.board)}')
   print(f'You will now choose {(board_len//2)} code words.')
   while required <= (board_len//2+2):
       print(f'Enter a {required}-letter word.')
@@ -86,12 +87,13 @@ print(f'Communications Encryption Finished.\n-----------------------------------
 
 ##----------------START MATCH----------------
 print(f'\nStarting enemy intelligence decryption.\n----------------------------------------------------------------------------------\n')
+print('\n\nCurrent intelligence status:\n' + full_board_formatter(p1.mask, npc.mask, p1, npc))
 while p1.score != diff_score[size] and npc.score != diff_score[size]:
   print(f'Your turn.')
   player_turn(p1, npc, p1.score, p1.turn_score, p1.rowcol_moves, npc.mask, p1.plays_list, npc.board, p1.hits, size)
   print(f'\n----------------------------------------------------------------------------------\nEnemy Turn.')
   npc_turn(npc, p1, npc.score, npc.turn_score, npc.rowcol_moves, p1.mask, npc.plays_list, p1.board, npc.hits, size)
-  print('\n' + full_board_formatter(p1.mask, npc.mask, p1, npc))
+  print('\nCurrent intelligence status:\n' + full_board_formatter(p1.mask, npc.mask, p1, npc))
 
 ##----------------DECLARE VICTOR----------------
 if p1.score == diff_score[size]:
