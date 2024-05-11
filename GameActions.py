@@ -358,11 +358,11 @@ def score_calc(player, opponent):
   return player.score
 
 #Function to get decryption percentage and progress bar
-def get_percentage_bar(turn_score, player, size, dict=diff_score):
+def get_percentage_bar(turn_score, player, size, dict):
   bar = ''
   if len(turn_score) > 0:
     newest = turn_score[-1]
-    percentage = newest / diff_score.get(size)*100
+    percentage = newest / dict.get(size)*100
     player.turn_percentage.append(percentage)
     temp_percentage = round(percentage)
     while temp_percentage >= 10:
@@ -384,5 +384,5 @@ def get_percentage_bar(turn_score, player, size, dict=diff_score):
 def player_turn(player, opponent, score, turn_score, rowcol_moves, mask, plays_list, board, hits, size):
   play_letter(mask, rowcol_moves, player, plays_list, board, hits)
   score_calc(player, opponent)
-  get_percentage_bar(turn_score, player, size)
+  get_percentage_bar(turn_score, player, size, diff_score)
 
