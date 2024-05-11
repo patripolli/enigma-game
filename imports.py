@@ -1,7 +1,16 @@
 ##----------------IMPORTS----------------
 #tools, packages, dependencies, word files...
-!pip install PyDictionary
-!pip install seaborn
+import subprocess
+
+def install(package):
+    try:
+        subprocess.check_call(["pip", "install", package])
+        print(f"Successfully installed {package}")
+    except subprocess.CalledProcessError as installerror:
+        print(f"Failed to install {package}: {installerror}")
+      
+install("PyDictionary")
+install("seaborn")
 import random as random
 import numpy as np
 import pandas as pd
@@ -42,7 +51,7 @@ example_filled_board = np.array([['N', 'E', 'W', '~', '~', '-', '~', '~'],
                                  ['~', '~', '~', '~', '~', '-', '-', 'C'],
                                  ['~', '~', '-', '~', '-', '~', '~', 'T']], dtype='<U1')
 
-example_one_word = = np.array([['B', 'U', 'Y', '~', '-', '~', '~', '~'],
+example_one_word = np.array([['B', 'U', 'Y', '~', '-', '~', '~', '~'],
                                 ['-', '~', '-', '-', '~', '-', '-', '~'],
                                 ['-', '~', '~', '-', '-', '~', '-', '-'],
                                 ['~', '-', '-', '-', '~', '-', '~', '~'],
