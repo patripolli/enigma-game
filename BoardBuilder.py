@@ -116,7 +116,7 @@ def full_board_formatter(board1, board2, player1, player2):
   pctg_line_npc, bar_npc = get_percentage_bar(npc.turn_score, npc, size)
 
   if len(board1) == 8:
-    formatted_board += pctg_line_npc+ separator3*3 + pctg_line_p1 + '\n' + bar_npc + separator3*8 + ' ' + bar_p1 + '\n'
+    formatted_board += pctg_line_npc+ separator3*4 + ' ' + pctg_line_p1 + '\n' + bar_npc + separator3*8 + ' ' + bar_p1 + '\n'
   if len(board1) == 10:
     formatted_board += pctg_line_npc+ separator3*8 + pctg_line_p1 + '\n' + bar_npc + separator3*11 + bar_p1 + '\n'
   if len(board1) == 12:
