@@ -21,7 +21,7 @@ if tut == '' or tut.upper() == 'Y' or tut.upper() == 'YES':
       print("In short, this is how the game plays out:\n\nYou'll choose your PARAMETERS, such as name and board length.\nThen, you'll ADD WORDS by choosing words of fixed length and a single-point coordinate as the START of the word and the ORIENTATION (optional, default is horizontal).")
       input()
       print("The first word is ALWAYS a 3-letter word.\nSo, to start, you could choose 'BUY' and enter A1 or A1H as the starting coordinate (nothing is case-sensitive, so don't worry about that).\nThis would be the resulting board:")
-      print(BoardBuilder.single_board_formatter((example_one_word))
+      print(BoardBuilder.single_board_formatter((example_one_word)))
       input()
       print("The game will prompt you on what you need to do, so READ and respond accordingly.\n\nGood game!")
 
