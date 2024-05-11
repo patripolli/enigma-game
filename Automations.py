@@ -21,6 +21,14 @@ def random_move(board):
   if randori == 'V':
     return numberdict.get(randnum-1)
 
+
+#Define a random coordinate for horizontal word placement
+def random_start_coord():
+    colcoord_all = random.randint(1, (board_len))
+    rowcoord_first3 = random.randint(1, 3)
+    rcoord = numberdict.get(colcoord_all) + str(rowcoord_first3) + 'H'
+    return rcoord
+
 #--------------PRIORITY SYSTEM----------------
 def attackpriority(mask, player, opponent):
     vertpriority = 0
