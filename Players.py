@@ -27,7 +27,26 @@ class Player:
           self.mask = self.board.copy()
       return self.board, self.mask, board_len, size
 
-    
+
+##---------------DIFFICULTY SETTING---------------
+#Honestly does nothing at the moment
+def set_difficulty():
+    difficulty = 0
+    while difficulty == 0:
+      difficulty = int(input(f'Please choose the difficulty:\n1 - Easy\n2 - Medium\n'))
+      if difficulty == 1:
+        print ('Difficulty set as Easy.')
+      elif difficulty == 2:
+        print ('Difficulty set as Medium.')
+      #IMPLEMENT DIFFICULTY   --   3 - Hard\n
+      #if difficulty == 3:
+        #print ('Difficulty set as Hard.')
+      else:
+        difficulty = 0
+        print ('Please choose a valid option.')
+    return difficulty
+
+
 #---------------NPC---------------
 class NPC():
     """Basic NPC Class."""
