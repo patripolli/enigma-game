@@ -16,3 +16,8 @@ from PyDictionary import PyDictionary
 dictionary=PyDictionary()
 np.set_printoptions(threshold=np.inf)
 beginnerwords_file = "beginnerwords.txt"
+import Automations
+import BoardBuilder
+import GameActions
+import GameplayLoop
+import Players
