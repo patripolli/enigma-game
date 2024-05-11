@@ -75,13 +75,6 @@ def word_check_npc(board, npc, required):
         not_repeated = True
     return valword
 
-#Define a random coordinate for horizontal word placement
-def random_start_coord():
-    colcoord_all = random.randint(1, (board_len))
-    rowcoord_first3 = random.randint(1, 3)
-    rcoord = numberdict.get(colcoord_all) + str(rowcoord_first3) + 'H'
-    return rcoord
-
 #Set coordinates for word
 def coordinates(word, board, player):
       sizecheck = 0
