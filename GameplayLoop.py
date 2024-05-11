@@ -56,7 +56,7 @@ def one_game():
   
   ##----------------SET BOARD WORDS/COORDS----------------
   while words_ready is False:
-    print(f'This is your board: {single_board_formatter(p1.board)}')
+    print(f'This is your board:\n{single_board_formatter(p1.board)}')
     print(f'You will now choose {(board_len//2)} code words.')
     while required <= (board_len//2+2):
         print(f'Enter a {required}-letter word.')
