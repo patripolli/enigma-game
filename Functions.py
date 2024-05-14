@@ -23,9 +23,9 @@ from random import choices
 from PyDictionary import PyDictionary
 
 dictionary = PyDictionary()
-np.set_printoptions(threshold=int(np.inf))
+np.set_printoptions(threshold=np.inf)
 
-#We're lacking a tutorial, so here's some boards for explanation
+# We're lacking a tutorial, so here's some boards for explanation
 example_clean_board = np.array([['~', '~', '~', '~', '-', '~', '~', '~'],
                                 ['-', '~', '-', '-', '~', '-', '-', '~'],
                                 ['-', '~', '~', '-', '-', '~', '-', '-'],
@@ -206,11 +206,14 @@ def full_board_formatter(board1, board2, turn_score1, turn_score2, turn_percenta
     pctg_line_npc, bar_npc = get_percentage_bar(turn_score2, turn_percentage2, size, diff_score, 'npc')
 
     if len(board1) == 8:
-        formatted_board += pctg_line_npc + separator3 * 5 + ' ' + pctg_line_p1 + '\n' + bar_npc + separator3 * 11 + ' ' + bar_p1 + '\n'
+        formatted_board += (pctg_line_npc + separator3 * 4 + '  ' + pctg_line_p1 +
+                            '\n' + bar_npc + separator3 * 8 + ' ' + bar_p1 + '\n')
     if len(board1) == 10:
-        formatted_board += pctg_line_npc + separator3 * 8 + pctg_line_p1 + '\n' + bar_npc + separator3 * 11 + bar_p1 + '\n'
+        formatted_board += (pctg_line_npc + separator3 * 7 + ' ' + pctg_line_p1 +
+                            '\n' + bar_npc + separator3 * 11 + ' ' + bar_p1 + '\n')
     if len(board1) == 12:
-        formatted_board += pctg_line_npc + separator3 * 10 + '  ' + pctg_line_p1 + '\n' + bar_npc + separator3 * 13 + '  ' + bar_p1 + '\n'
+        formatted_board += (pctg_line_npc + separator3 * 10 + pctg_line_p1 +
+                            '\n' + bar_npc + separator3 * 14 + bar_p1 + '\n')
     return formatted_board
 
 
@@ -242,7 +245,7 @@ class Player:
         self.mask = None
         self.hits = []
         self.score = 0
-        self.turn_score = []
+        self.turn_score = [0]
         self.turn_percentage = []
 
     def set_board(self):
@@ -251,14 +254,14 @@ class Player:
             match_board = new_board()
             self.bkp_board, board_len, size = match_board[0], match_board[1], match_board[2]
             self.board = self.bkp_board.copy()
-            #print (f"this is board{self.board}, of {board_len} length")
+            # print (f"this is board{self.board}, of {board_len} length")
             if self.mask is None:
                 self.mask = self.board.copy()
         return self.board, self.mask, board_len, size
 
 
 ##---------------DIFFICULTY SETTING---------------
-#Honestly does nothing at the moment
+# Honestly does nothing at the moment
 def set_difficulty():
     difficulty = 0
     int_check = False
@@ -274,16 +277,16 @@ def set_difficulty():
             print('Difficulty set as Easy.')
         elif difficulty == 2:
             print('Difficulty set as Medium.')
-        #IMPLEMENT DIFFICULTY   --   3 - Hard\n
-        #if difficulty == 3:
-        #print ('Difficulty set as Hard.')
+        # IMPLEMENT DIFFICULTY   --   3 - Hard\n
+        # if difficulty == 3:
+        # print ('Difficulty set as Hard.')
         else:
             difficulty = 0
             print('Please choose a valid option.')
     return difficulty
 
 
-#---------------NPC---------------
+# ---------------NPC---------------
 class NPC():
     """Basic NPC Class."""
 
@@ -297,7 +300,7 @@ class NPC():
         self.mask = self.board.copy()
         self.hits = []
         self.score = 0
-        self.turn_score = []
+        self.turn_score = [0]
         self.turn_percentage = []
 
 
@@ -305,7 +308,7 @@ class NPC():
 beginnerwords_file = "beginnerwords.txt"
 
 
-#Function to make the basic word list
+# Function to make the basic word list
 def make_word_list():
     full_word_list = []
     with open(beginnerwords_file, "r") as beginner_words:
@@ -319,7 +322,7 @@ beginner_word_list = make_word_list()
 
 
 ##---------------WORD PLACING FUNCTIONS---------------
-#Function to check if the word is in the English dictionary and whether it fits the board
+# Function to check if the word is in the English dictionary and whether it fits the board
 def word_check_player(board, word_list, required):
     not_repeated = False
     while not_repeated == False:
@@ -336,19 +339,19 @@ def word_check_player(board, word_list, required):
                 word = random.choice(word_matcher('.' * required))
                 print(f'Suggested word: {word.title()}')
         ####This USED to be the length check until I decided to add fixed word lengths. Leaving it here just in case.
-        #while len(word) < 2:
-        #print ("One letter words are not allowed. Please enter a word with 2 or more letters.")
-        #word = input(f"Enter the word you’d like to add to the board:\n").title()
-        #while len(word) > len(board):
-        #print (f"Your word is bigger than the board. Please enter a word with up to {len(board)} letters.")
-        #word = input(f"Enter the word you’d like to add to the board:\n").title()
+        # while len(word) < 2:
+        # print ("One letter words are not allowed. Please enter a word with 2 or more letters.")
+        # word = input(f"Enter the word you’d like to add to the board:\n").title()
+        # while len(word) > len(board):
+        # print (f"Your word is bigger than the board. Please enter a word with up to {len(board)} letters.")
+        # word = input(f"Enter the word you’d like to add to the board:\n").title()
         wordmatch = 0
         while wordmatch == 0:
             if dictionary.meaning(word, True) is not None:
                 wordmatch += 1
                 valword = word
                 if word not in beginner_word_list:
-                    new_words.append(word)
+                    new_words.append(word.lower())
             else:
                 print("Word not found. Please make sure the word exists in the English language dictionary.")
                 word = input(f"Enter the word you’d like to add to the board:\n").title()
@@ -363,13 +366,13 @@ def word_check_player(board, word_list, required):
     return valword
 
 
-#Same but for NPC
+# Same but for NPC
 def word_check_npc(board, required, word_list, npc='npc'):
     word = ''
     not_repeated = False
     while not_repeated == False:
-        #while len(word) < 2 or len(word) > len(board):
-        #word = random.choice(beginner_word_list)
+        # while len(word) < 2 or len(word) > len(board):
+        # word = random.choice(beginner_word_list)
         word = random.choice(word_matcher('.' * required))
         if word in word_list:
             word = random.choice(word_matcher('.' * required))
@@ -387,7 +390,7 @@ def word_check_npc(board, required, word_list, npc='npc'):
     return valword
 
 
-#Set coordinates for word
+# Set coordinates for word
 def coordinates(word, board, user):
     sizecheck = 0
     lencheck = False
@@ -398,7 +401,7 @@ def coordinates(word, board, user):
     # Restrain coordinate check within empty space check
     while not emptycheck:
 
-        #Transform str coordinates to int-int and -1 to reflect actual array positions
+        # Transform str coordinates to int-int and -1 to reflect actual array positions
         while lencheck == False:
             while sizecheck < 2:
                 rawcoord = []
@@ -412,7 +415,7 @@ def coordinates(word, board, user):
                 for i in firstsquare:
                     rawcoord.append(i)
 
-                #Check if the coordinates are within the board
+                # Check if the coordinates are within the board
                 try:
                     vertcoord = letterdict.get(rawcoord[0])
                     if vertcoord < len(board):
@@ -445,7 +448,7 @@ def coordinates(word, board, user):
                         print("Invalid board coordinates.")
                     sizecheck = 0
 
-            #Horizontal and Vertical fit checks
+            # Horizontal and Vertical fit checks
             if orient == "V":
                 if vwc <= len(board):
                     lencheck = True
@@ -466,31 +469,31 @@ def coordinates(word, board, user):
                 if user == 'p1':
                     print(f"Those coordinates won't fit the word. Move at least {diff} spaces {guide}.")
 
-        #Check for vertical overlap
+        # Check for vertical overlap
         if orient == "V":
             coordinate = vertcoord
             for letter in word.upper():
                 if board[coordinate][horizontcoord] in wavez:
                     empty += 1
-                #if letter == board[coordinate][horizontcoord]:
-                #nice_overlap += 1
+                # if letter == board[coordinate][horizontcoord]:
+                # nice_overlap += 1
                 coordinate += 1
 
-        #Check for horizontal overlap
+        # Check for horizontal overlap
         if orient == "H":
             coordinate = horizontcoord
             for letter in word.upper():
                 if board[vertcoord][coordinate] in wavez:
                     empty += 1
-                #if letter == board[vertcoord][coordinate]:
-                #nice_overlap += 1
+                # if letter == board[vertcoord][coordinate]:
+                # nice_overlap += 1
                 coordinate += 1
 
-        #Allow word if no overlap or single overlap
+        # Allow word if no overlap or single overlap
         if empty == fullword:
             emptycheck = True
-        #elif empty == fullword-nice_overlap:
-        #emptycheck = True
+        # elif empty == fullword-nice_overlap:
+        # emptycheck = True
         else:
             lencheck = False
             emptycheck = False
@@ -503,13 +506,13 @@ def coordinates(word, board, user):
     return vertcoord, horizontcoord, orient
 
 
-#Place the word in the board
+# Place the word in the board
 def actualy_place(word, board, vc, hc, orientation):
     charlist = []
     for i in word:
         charlist.append(i.upper())
 
-    #Set orientation and place
+    # Set orientation and place
     if orientation == 'V':
         for i in charlist:
             board[vc][hc] = i
@@ -521,7 +524,7 @@ def actualy_place(word, board, vc, hc, orientation):
     return board
 
 
-#Entire word placement function for players
+# Entire word placement function for players
 def place_word_player(board, required, word_list, user):
     checkedword = word_check_player(board, word_list, required)
     vertcoord, horizontcoord, orient = coordinates(checkedword, board, user)
@@ -531,7 +534,7 @@ def place_word_player(board, required, word_list, user):
     return board
 
 
-#Entire word placement function for NPCs
+# Entire word placement function for NPCs
 def place_word_npc(board, required, word_list, user):
     checkedword = word_check_npc(board, required, word_list)
     vertcoord, horizontcoord, orient = coordinates(checkedword, board, user)
@@ -541,7 +544,7 @@ def place_word_npc(board, required, word_list, user):
 
 
 ##-----------TURN AND SCORE FUNCTIONS---------------
-#Function for a human player to play a letter
+# Function for a human player to play a letter
 def play_letter(mask, rowcol_moves, plays_list, board, hits):
     fullcoord = ''
     fullcheck = 0
@@ -549,6 +552,7 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
     rights = 0
     typehits = []
     letterrow = []
+    rowcolumn = ''
     while fullcheck < 3:
         fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
         while len(fullcoord) < 3:
@@ -576,7 +580,7 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
                 fullcheck = 0
                 print("Invalid column.")
         except:
-            if rowcolumn in letterdict and letterdict.get(rowcolumn) <= len(board):
+            if rowcolumn in letterdict and letterdict.get(rowcolumn) < len(board):
                 fullcheck += 1
             else:
                 fullcheck = 0
@@ -588,10 +592,6 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
         else:
             fullcheck += 1
             plays_list.append(fullcoord.lower())
-    try:
-        rowcolumn = int(rowcolumn)
-    except:
-        rowcolumn = str(rowcolumn)
 
     if type(rowcolumn) is str:
         row = letterdict.get(rowcolumn)
@@ -639,7 +639,7 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
                     print(f"There's something in {numberdict.get(i)}{rowcolumn}.")
 
     rowcol_regex = ''.join(typehits)
-    #print (type(rowcolumn))
+    # print (type(rowcolumn))
     if rowcol_regex == rowcol_moves.get(rowcolumn):
         print('No new information.')
     if rowcol_moves.get(rowcolumn) != None:
@@ -649,22 +649,23 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
     return mask
 
 
-#Function to calculate the current score
-# LIMPAR SCORE DA FUNÇÃO
-def score_calc(hits, rowcol_moves, turn_score, score, opponent_word_list):
+# Function to calculate the current score
+def score_calc(hits, rowcol_moves, turn_score, opponent_word_list):
+    # print(f'655 - starting score: score')
     tempscore = 0
     tempscore += len(hits) * 5
+    # print(f'658 - hits tempscore: {tempscore}')
     for i in list(rowcol_moves.keys()):
         word = rowcol_moves.get(i)
         for single in opponent_word_list:
             if single.lower() in word.lower():
                 tempscore += 100
+    # print(f'664 - all tempscore: {tempscore}')
     turn_score.append(tempscore)
-    score = tempscore
-    return score
+    return turn_score
 
 
-#Function to get decryption percentage and progress bar
+# Function to get decryption percentage and progress bar
 def get_percentage_bar(turn_score, turn_percentage, size, dict, user):
     bar = ''
     percentage = 0
@@ -687,10 +688,10 @@ def get_percentage_bar(turn_score, turn_percentage, size, dict, user):
 
 
 ##Function for 1 complete player turn
-def player_turn(score, turn_score, turn_percentage, rowcol_moves, mask, plays_list, board, hits, size,
+def player_turn(turn_score, turn_percentage, rowcol_moves, mask, plays_list, board, hits, size,
                 opponent_word_list, score_dict, user='p1'):
     play_letter(mask, rowcol_moves, plays_list, board, hits)
-    score_calc(hits, rowcol_moves, turn_score, score, opponent_word_list)
+    score_calc(hits, rowcol_moves, turn_score, opponent_word_list)
     get_percentage_bar(turn_score, turn_percentage, size, score_dict, user)
 
 
@@ -698,19 +699,23 @@ def player_turn(score, turn_score, turn_percentage, rowcol_moves, mask, plays_li
 
 ##--------------REGEX WORD MATCHER----------------
 def word_matcher(guessregex):
+    # print(f'698 - {guessregex} in function')
     possible_words = []
-    midRegex = r"^{0}$".format(guessregex)
+    midRegex = r'^{0}$'.format(guessregex)
+    # print(f'701 - Midregex {midRegex}')
     pattern = re.compile(midRegex)
+    # print(f'701 - pattern {pattern}')
     for word in beginner_word_list:
         word = word.strip()
         if pattern.match(word):
             possible_words.append(word)
+    # print(f'698 - possible {possible_words} in function')
     return possible_words
 
 
-#--------------RANDOM MOVE----------------
+# --------------RANDOM MOVE----------------
 def random_move(board):
-    ori = ['H', 'V']
+    ori = ['H', 'V', 'V', 'V']
     randori = random.choice(ori)
     randnum = random.randint(1, len(board))
     if randori == 'H':
@@ -719,7 +724,7 @@ def random_move(board):
         return numberdict.get(randnum - 1)
 
 
-#Define a random coordinate for horizontal word placement
+# Define a random coordinate for horizontal word placement
 def random_start_coord(board):
     colcoord_all = random.randint(1, (len(board)))
     rowcoord_first3 = random.randint(1, 3)
@@ -727,7 +732,7 @@ def random_start_coord(board):
     return rcoord
 
 
-#--------------PRIORITY SYSTEM----------------
+# --------------PRIORITY SYSTEM----------------
 def attackpriority(mask, score, turn_score, rowcol_moves, opponent_word_list):
     vertpriority = 0
     horizpriority = 0
@@ -736,114 +741,166 @@ def attackpriority(mask, score, turn_score, rowcol_moves, opponent_word_list):
     highesthoriz = 0
     horizontcoord = 0
     vertcoord = 0
-
-    #Row priority check
+    miss = 0
+    typehits = []
+    # Row priority check
     while horizontcoord < len(mask):
+        rowcol_regex = ''
+        typehits = []
+        vertcoord = 0
+        priority = 0
         for i in range(len(mask)):
             if mask[horizontcoord][vertcoord] in wavez:
                 vertcoord += 1
                 continue
             if mask[horizontcoord][vertcoord] == '?':
+                typehits.append('.')
                 priority += 1
                 vertcoord += 1
+                miss += 1
                 continue
             if mask[horizontcoord][vertcoord] in alphabet:
+                typehits.append(mask[horizontcoord][vertcoord].lower())
                 priority += 10
                 vertcoord += 1
-        if priority % 10 == 0:
+        # print(f'762 typehits: {typehits}')
+        rowcol_regex = ''.join(typehits)
+        # print(f'762 rowcol_regex: {rowcol_regex}')
+        if rowcol_moves.get(numberdict.get(horizontcoord)) is not None:
+            rowcol_moves.update({numberdict.get(horizontcoord): rowcol_regex})
+        else:
+            rowcol_moves.setdefault(numberdict.get(horizontcoord), rowcol_regex)
+        turn_words = word_matcher(rowcol_regex)
+        # print(f'776 - turn_words len: {len(turn_words)}')
+        if len(rowcol_regex) > 2 and len(turn_words) == 0:
+            # print(f'779 - zero priority due to no turn words')
             priority = 0
+        if miss == 0:
+            priority = 0
+        if all(i.isalpha() for i in rowcol_regex):
+            priority = 0
+        if len(rowcol_regex) < 3 and priority > 10:
+            priority -= 9
         if priority > highesthoriz:
             highesthoriz = priority
             horizpriority = horizontcoord
         horizontcoord += 1
-        vertcoord = 0
-        priority = 0
-
-    horizontcoord = 0
     vertcoord = 0
+    horizontcoord = 0
 
-    #Column priority check
+    # Column priority check
 
     while vertcoord < len(mask):
+        rowcol_regex = ''
+        typehits = []
+        horizontcoord = 0
+        priority = 0
         for i in range(len(mask)):
             if mask[horizontcoord][vertcoord] in wavez:
                 horizontcoord += 1
                 continue
             if mask[horizontcoord][vertcoord] == '?':
+                typehits.append('.')
                 priority += 1
                 horizontcoord += 1
+                miss += 1
                 continue
-            if mask[horizontcoord][vertcoord].isalpha() == True:
+            if mask[horizontcoord][vertcoord].isalpha():
+                typehits.append(mask[horizontcoord][vertcoord].lower())
                 priority += 10
                 horizontcoord += 1
-        if priority % 10 == 0:
+        # print(f'799 typehits: {typehits}')
+        rowcol_regex = ''.join(typehits)
+        # print(f'801 rowcol_regex: {rowcol_regex}')
+        if rowcol_moves.get(vertcoord + 1) is not None:
+            rowcol_moves.update({vertcoord + 1: rowcol_regex})
+        else:
+            rowcol_moves.setdefault(vertcoord + 1, rowcol_regex)
+        turn_words = word_matcher(rowcol_regex)
+        # print(f'819 - turn_words len: {len(turn_words)}')
+        if len(rowcol_regex) > 2 and len(turn_words) == 0:
+            # print(f'821 - zero priority due to no turn words')
+            priority = 0
+        if miss == 0:
+            priority = 0
+        if all(i.isalpha() for i in rowcol_regex):
             priority = 0
         if priority > highestvert:
             highestvert = priority
             vertpriority = vertcoord
         vertcoord += 1
-        horizontcoord = 0
-        priority = 0
 
-    if vertpriority == 0 and horizpriority == 0:
-        finalpriority = 'in{0}'.format(random_move(mask))
-        return finalpriority
-    if vertpriority == horizpriority:
-        if highesthoriz > highestvert:
-            horizpriority -= 1
+    # print(f'813 - highestvert: {highestvert} and highesthoriz: {highesthoriz}')
+    # print(f'814 - vertpriority: {vertpriority+1} and horizpriority: {horizpriority}')
+
+    if 0 < highestvert == highesthoriz > 0:
+        if random.randint(1, 2) == 2:
+            highesthoriz -= 1
         else:
-            vertpriority -= 1
-    if score == 0 or len(
-            turn_score) < 2:  #(player.turn_score[-1] == player.turn_score[-2] and player.turn_score[-2] == player.turn_score[-3]):
+            highestvert -= 1
+    if len(turn_score) < 3:
+        # print(f'820 - Chosen by len {len(turn_score)}')
         finalpriority = 'in{0}'.format(random_move(mask))
         return finalpriority
-    if vertpriority > horizpriority:
-        rowkey = numberdict.get(vertpriority)
-        finalpriority = 'in{0}'.format(rowkey)
+
+    if random.randint(1, 7) == 3:
+        # print(f'824 - Chosen by random randint')
+        finalpriority = 'in{0}'.format(random_move(mask))
         return finalpriority
+    if highestvert > highesthoriz:
+        # print(f'828 - Chosen by highestvert: {vertpriority+1}')
+        finalpriority = 'in{0}'.format(vertpriority+1)
+        return finalpriority
+    # if turn_score[-1] == turn_score[-2] and turn_score[-2] == turn_score[-3] and turn_score[-3] == turn_score[-4] and turn_score[-4] == turn_score[-5]:
     else:
         finalpriority = 'in{0}'.format(numberdict.get(horizpriority))
+        # print(f'834 - Chosen by formatted highesthoriz: {numberdict.get(horizpriority)}')
     for i in list(rowcol_moves.keys()):
         word = rowcol_moves.get(i)
     for single in opponent_word_list:
         if single.lower() in word.lower():
+            # print(f'839 - Chosen by cleared word... I guess?')
             finalpriority = 'in{0}'.format(random_move(mask))
     return finalpriority
 
 
-#--------------CHOOSE NPC MOVE----------------
+# --------------CHOOSE NPC MOVE----------------
 def choose_move(thismove, rowcol_moves, plays_list):
     possible_letters = []
     turn_rowcol = thismove.upper().split("IN")
-    #print (turn_rowcol)
+    # print(f'851 - rowcol_moves: {rowcol_moves}')
+    # print(f'852 - turn_rowcol: {turn_rowcol}')
+    try:
+        turn_rowcol[1] = int(turn_rowcol[1])
+    except:
+        pass
     operation_regex = rowcol_moves.get(turn_rowcol[1])
-    if operation_regex is None:
+    # print(f'854 - operation_regex: {operation_regex}')
+    if operation_regex is None or len(operation_regex) < 2:
         turn_letter = random.choice(dear_vowels)
-        turn_play = turn_letter + thismove
+        turn_play = turn_letter.upper() + thismove
         return turn_play
-    if len(operation_regex) > 2:
-        if all(dot == '.' for dot in operation_regex):
-            turn_letter = random.choice(dear_vowels)
-            turn_play = turn_letter + thismove
-            return turn_play
+    if all(dot == '.' for dot in operation_regex):
+        turn_letter = random.choice(dear_vowels)
+        turn_play = turn_letter.upper() + thismove
+        return turn_play
     turn_words = word_matcher(operation_regex)
+    # print(f'855 - {turn_words}')
     if len(turn_words) < 1:
         turn_words = random.sample(beginner_word_list, 3)
-    if operation_regex == None:
+    if operation_regex is None:
         turn_letter = random.choice(dear_vowels)
-        turn_play = turn_letter + thismove
+        while turn_letter in dear_vowels:
+            turn_letter = random.choice(dear_vowels)
+        turn_play = turn_letter.upper() + thismove
         return turn_play
     this_word = random.choice(turn_words)
+    # print(f'870 - this word: {this_word}')
     for letter in this_word:
-        if letter in operation_regex:
-            continue
-        else:
             possible_letters.append(letter)
-    try:
-        turn_letter = random.choice(possible_letters)
-    except:
-        turn_letter = random.choice(alphabet)
-    turn_play = turn_letter + thismove
+    turn_letter = random.choice(possible_letters)
+    # print(f'870 - from possible letters: {turn_letter}')
+    turn_play = turn_letter.upper() + thismove
     if turn_play in plays_list:
         return None
     else:
@@ -854,10 +911,8 @@ def choose_move(thismove, rowcol_moves, plays_list):
 def npc_play_letter(mask, rowcol_moves, plays_list, board, hits, newplay):
     booms = 0
     typehits = []
-
     letterrow = newplay.upper().split("IN")
     boardletter, rowcolumn = letterrow[0], letterrow[1]
-    plays_list.append(newplay.lower())
 
     try:
         rowcolumn = int(rowcolumn)
@@ -924,12 +979,20 @@ def npc_play_letter(mask, rowcol_moves, plays_list, board, hits, newplay):
 def npc_turn(score, turn_score, turn_percentage, rowcol_moves, mask, plays_list, board, hits, size, opponent_word_list,
              score_dict, user='npc'):
     newplay = None
-    while newplay == None:
-        thismove = attackpriority(mask, score, turn_score, rowcol_moves, opponent_word_list)
+    thismove = None
+    while newplay is None:
+        while thismove is None:
+            thismove = attackpriority(mask, score, turn_score, rowcol_moves, opponent_word_list)
         newplay = choose_move(thismove, rowcol_moves, plays_list)
+        # print(f'981 newplay formatting check newplay: {newplay}\nplays:{sorted(plays_list)}')
+        if newplay.lower() in plays_list:
+            # print(f'983 - Repeated play')
+            newplay = None
+            thismove = None
+    plays_list.append(newplay.lower())
     print(newplay)
     npc_play_letter(mask, rowcol_moves, plays_list, board, hits, newplay)
-    score_calc(hits, rowcol_moves, turn_score, score, opponent_word_list)
+    score_calc(hits, rowcol_moves, turn_score, opponent_word_list)
     get_percentage_bar(turn_score, turn_percentage, size, score_dict, user)
 
     ##----------------GAMEPLAY LOOP----------------
@@ -991,7 +1054,7 @@ def one_game(required):
 
     print(f'Parameters Ready.\n----------------------------------------------------------------------------------\n')
 
-    ##----------------SET BOARD WORDS/COORDS----------------
+    # ----------------SET BOARD WORDS/COORDS----------------
     while words_ready is False:
         print(f'This is your board:\n{single_board_formatter(p1.board)}')
         print(f'You will now choose {(board_len // 2)} code words.')
@@ -1010,44 +1073,51 @@ def one_game(required):
                 required += 1
             print('Enemy Comms Encrypted.')
             words_ready = True
-            if len(new_words) == 1:
-                with open(beginnerwords_file, "a") as wlist:
-                    wlist.write(new_words[0] + '\n')
-            if len(new_words) > 1:
-                with open(beginnerwords_file, "a") as wlist:
-                    wlist.write('\n'.join(new_words))
+            with open(beginnerwords_file, "r+") as wlist:
+                for word in new_words:
+                    if word.strip in wlist:
+                        continue
+                    else:
+                        wlist.write('\n' + word.lower())
+            wlist.close()
+
         else:
             p1.word_list = []
             p1.board = p1.bkp_board.copy()
             required = 3
 
     print(
-        f'Communications Encryption Finished.\n----------------------------------------------------------------------------------\n')
+        f'Communications Encryption Finished.'
+        f'\n----------------------------------------------------------------------------------\n')
 
     ##----------------PLAY MATCH----------------
     print(
-        f'\nStarting enemy intelligence decryption.\n----------------------------------------------------------------------------------\n')
+        f'\nStarting enemy intelligence decryption.'
+        f'\n----------------------------------------------------------------------------------\n')
     print('\n\nCurrent intelligence status:\n' + full_board_formatter(p1.mask, npc.mask, p1.turn_score, npc.turn_score,
                                                                       p1.turn_percentage, npc.turn_percentage, size))
-    while p1.score < diff_score[size] and npc.score < diff_score[size]:
+    while p1.turn_score[-1] < diff_score[size] and npc.turn_score[-1] < diff_score[size]:
         print(f'Your turn.')
-        player_turn(p1.score, p1.turn_score, p1.turn_percentage, p1.rowcol_moves, npc.mask, p1.plays_list, npc.board,
+        player_turn(p1.turn_score, p1.turn_percentage, p1.rowcol_moves, npc.mask, p1.plays_list, npc.board,
                     p1.hits, size, npc.word_list, diff_score)
         print(f'\n----------------------------------------------------------------------------------\nEnemy Turn.')
-        npc_turn(npc.score, npc.turn_score, npc.turn_percentage, npc.rowcol_moves, p1.mask, npc.plays_list, p1.board,
+        npc_turn(npc.turn_score[-1], npc.turn_score, npc.turn_percentage, npc.rowcol_moves, p1.mask, npc.plays_list, p1.board,
                  npc.hits, size, p1.word_list, diff_score)
 
         print(
             '\nCurrent intelligence status:\n' + full_board_formatter(p1.mask, npc.mask, p1.turn_score, npc.turn_score,
                                                                       p1.turn_percentage, npc.turn_percentage, size))
+        # print(f'1104 - p1.score:{p1.turn_score[-1]} npc.score:{npc.turn_score[-1]} max score: {diff_score[size]}')
 
     ##----------------DECLARE VICTOR----------------
-    if p1.score > diff_score[size]:
+    if p1.turn_score[-1] == diff_score[size]:
         print('ENEMY MESSAGE DECRYPTED:\n' + '---'.join([i.upper() for i in npc.word_list]) + '\n\nYOU WON!\n')
 
-    if npc.score > diff_score[size]:
-        print('ALLIED MESSAGE DECRYPTED:\n' + '---'.join([i.upper() for i in p1.word_list]) + '\n\nYou lost...\n')
-
+    if npc.turn_score[-1] == diff_score[size]:
+        print('ALLIED MESSAGE DECRYPTED:\n' + '---'.join([i.upper() for i in p1.word_list]) +
+              '\n\nYou lost...\nThe Enemy Message was:' + '---'.join([i.upper() for i in npc.word_list]))
+    del p1.turn_score[0]
+    del npc.turn_score[0]
     ##----------------PRINT SCORE GRAPH----------------
     print('Decryption progression:')
     make_graph(p1.turn_percentage, npc.turn_percentage)
