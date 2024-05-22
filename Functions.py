@@ -315,7 +315,7 @@ def log_ask(log_qstn, p1_dict, npc_dict):
                          "Other commands will reset the parameters.\n").upper()
     if log_qstn == '' or log_qstn.upper() == 'Y' or log_qstn.upper() == 'YES':
         print(f"VARIABLES LOG\n\nP1\nNPC\n\nLOGS PULLED\n\nCREATING FILE...")
-        logfile = open(f"{p1_dict.get('name')}'s Match on {year}-{month}-{day} at {hour}h{minute}min.txt", 'a')
+        logfile = open(f"{p1_dict.get('name')}'s Match on {year}_{month}_{day} at {hour}h{minute}min{second}sec.txt", 'a')
         logfile.write(f"---Match Variables---\n\n"
                       f"Match start: {hour}:{minute}:{second}\n\n"
                       f"P1:\n\n{p1_dict}\n"
