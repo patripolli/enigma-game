@@ -19,6 +19,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import re
+import datetime
 from random import choices
 from PyDictionary import PyDictionary
 
@@ -75,12 +76,14 @@ example_full_formatted = ('\n               Y O U                    |          
                           'Enemy decryption progress: 0%            Your decryption progress: 0%\n'
                           '[▯▯▯▯▯▯▯▯▯▯]                         [▯▯▯▯▯▯▯▯▯▯]\n')
 
-##---------------GLOBAL VARIABLES--------------
+# ---------------GLOBAL VARIABLES--------------
 new_words = []
 required = 3
 turn_numbers = []
+year, month, day = datetime.date.today().year, datetime.date.today().month, datetime.date.today().day
+hour, minute, second = datetime.datetime.now().hour, datetime.datetime.now().minute, datetime.datetime.now().second
 
-##---------------BOARD BUILDING, DIFFICULTY AND SCORE GRAPH FUNCTIONS---------------
+# ---------------BOARD BUILDING, DIFFICULTY AND SCORE GRAPH FUNCTIONS---------------
 
 # ---------------BOARD VARIABLES---------------
 # Some variables and mapping for later
@@ -304,7 +307,28 @@ class NPC():
         self.turn_percentage = []
 
 
-##---------------WORD LIST---------------
+# ---------------LOG MAKER---------------
+
+def log_ask(log_qstn, p1_dict, npc_dict):
+    if log_qstn is None:
+        log_qstn = input("Save game log? (PLEASE DO if something didn't work!!\nType Y/y, Yes or hit Enter to confirm. "
+                         "Other commands will reset the parameters.\n").upper()
+    if log_qstn == '' or log_qstn.upper() == 'Y' or log_qstn.upper() == 'YES':
+        print(f"VARIABLES LOG\n\nP1\nNPC\n\nLOGS PULLED\n\nCREATING FILE...")
+        logfile = open(f"{p1_dict.get('name')}'s Match on {year}-{month}-{day} at {hour}h{minute}min.txt", 'a')
+        logfile.write(f"---Match Variables---\n\n"
+                      f"Match start: {hour}:{minute}:{second}\n\n"
+                      f"P1:\n\n{p1_dict}\n"
+                      f"NPC\n{npc_dict}\n\n"
+                      f"Match end: {datetime.datetime.now().strftime('%H:%M.%S')}\n\n"
+                      f"---END LOG")
+        logfile.close()
+        return print("LOG FILE CREATED.")
+    else:
+        pass
+
+
+# ---------------WORD LIST---------------
 beginnerwords_file = "beginnerwords.txt"
 
 
@@ -545,7 +569,16 @@ def place_word_npc(board, required, word_list, user):
 
 ##-----------TURN AND SCORE FUNCTIONS---------------
 # Function for a human player to play a letter
-def play_letter(mask, rowcol_moves, plays_list, board, hits):
+def play_letter(mask, rowcol_moves, plays_list, board, hits, p1, npc):
+    def log_in_turn(fullcoord):
+        if fullcoord.lower() == 'exit':
+            log_ask('', p1.__dict__, npc.__dict__)
+            print(f"\nClosing game.")
+            exit()
+        if fullcoord.lower() == 'debug':
+            print(f"---Match Variables---P1:\n\n{p1.__dict__}\nNPC\n{npc.__dict__}\n\n---")
+            log_ask(None, p1.__dict__, npc.__dict__)
+
     fullcoord = ''
     fullcheck = 0
     booms = 0
@@ -553,18 +586,24 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
     typehits = []
     letterrow = []
     rowcolumn = ''
+    input_prompt = (f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):          "
+                          f"(Enter 'exit' to write a log and end the match. Enter 'debug' to print the log)\n")
     while fullcheck < 3:
-        fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+        fullcoord = input(input_prompt)
+        log_in_turn(fullcoord)
         while len(fullcoord) < 3:
             print("Invalid play.")
-            fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+            fullcoord = input(input_prompt)
+            log_in_turn(fullcoord)
             if 'in' not in fullcoord:
                 print("Invalid play.")
-                fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+                fullcoord = input(input_prompt)
+                log_in_turn(fullcoord)
         letterrow = fullcoord.upper().split("IN")
         while len(letterrow) < 2:
             print("Invalid play.")
-            fullcoord = input(f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):\n")
+            fullcoord = input(input_prompt)
+            log_in_turn(fullcoord)
             letterrow = fullcoord.upper().split("IN")
         boardletter, rowcolumn = letterrow[0], letterrow[1]
         if boardletter in letterdict:
@@ -642,7 +681,7 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
     # print (type(rowcolumn))
     if rowcol_regex == rowcol_moves.get(rowcolumn):
         print('No new information.')
-    if rowcol_moves.get(rowcolumn) != None:
+    if rowcol_moves.get(rowcolumn) is not None:
         rowcol_moves.update({rowcolumn: rowcol_regex})
     else:
         rowcol_moves.setdefault(rowcolumn, rowcol_regex)
@@ -650,20 +689,31 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits):
 
 
 # Function to calculate the current score
+hits = []
+rowcol_moves = {'D': 'key', 'E': 'reject', 'G': 'youth', 'H': 'bind'}
+turn_score = [0]
+opponent_word_list = ['key', 'reject', 'youth', 'bind']
+
+
 def score_calc(hits, rowcol_moves, turn_score, opponent_word_list):
-    # print(f'655 - starting score: score')
+    # print(f'655 - starting score: turn_score[-1]')
     tempscore = 0
     tempscore += len(hits) * 5
     # print(f'658 - hits tempscore: {tempscore}')
     for i in list(rowcol_moves.keys()):
+        # print(f'663 - i in keylist: {i}')
         word = rowcol_moves.get(i)
         for single in opponent_word_list:
+            # print(f'666 - single vs. word wordlist: {single, word}')
             if single.lower() in word.lower():
+                # print(f'668 - matched: {single, word}')
                 tempscore += 100
     # print(f'664 - all tempscore: {tempscore}')
     turn_score.append(tempscore)
     return turn_score
 
+
+# score_calc(hits, rowcol_moves, turn_score, opponent_word_list)
 
 # Function to get decryption percentage and progress bar
 def get_percentage_bar(turn_score, turn_percentage, size, dict, user):
@@ -689,8 +739,8 @@ def get_percentage_bar(turn_score, turn_percentage, size, dict, user):
 
 ##Function for 1 complete player turn
 def player_turn(turn_score, turn_percentage, rowcol_moves, mask, plays_list, board, hits, size,
-                opponent_word_list, score_dict, user='p1'):
-    play_letter(mask, rowcol_moves, plays_list, board, hits)
+                opponent_word_list, score_dict, p1, npc, user='p1'):
+    play_letter(mask, rowcol_moves, plays_list, board, hits, p1, npc)
     score_calc(hits, rowcol_moves, turn_score, opponent_word_list)
     get_percentage_bar(turn_score, turn_percentage, size, score_dict, user)
 
@@ -849,7 +899,7 @@ def attackpriority(mask, score, turn_score, rowcol_moves, opponent_word_list):
         return finalpriority
     if highestvert > highesthoriz:
         # print(f'828 - Chosen by highestvert: {vertpriority+1}')
-        finalpriority = 'in{0}'.format(vertpriority+1)
+        finalpriority = 'in{0}'.format(vertpriority + 1)
         return finalpriority
     # if turn_score[-1] == turn_score[-2] and turn_score[-2] == turn_score[-3] and turn_score[-3] == turn_score[-4] and turn_score[-4] == turn_score[-5]:
     else:
@@ -897,7 +947,7 @@ def choose_move(thismove, rowcol_moves, plays_list):
     this_word = random.choice(turn_words)
     # print(f'870 - this word: {this_word}')
     for letter in this_word:
-            possible_letters.append(letter)
+        possible_letters.append(letter)
     turn_letter = random.choice(possible_letters)
     # print(f'870 - from possible letters: {turn_letter}')
     turn_play = turn_letter.upper() + thismove
@@ -1099,10 +1149,13 @@ def one_game(required):
     while p1.turn_score[-1] < diff_score[size] and npc.turn_score[-1] < diff_score[size]:
         print(f'Your turn.')
         player_turn(p1.turn_score, p1.turn_percentage, p1.rowcol_moves, npc.mask, p1.plays_list, npc.board,
-                    p1.hits, size, npc.word_list, diff_score)
+                    p1.hits, size, npc.word_list, diff_score, p1, npc)
         print(f'\n----------------------------------------------------------------------------------\nEnemy Turn.')
-        npc_turn(npc.turn_score[-1], npc.turn_score, npc.turn_percentage, npc.rowcol_moves, p1.mask, npc.plays_list, p1.board,
+        npc_turn(npc.turn_score[-1], npc.turn_score, npc.turn_percentage, npc.rowcol_moves, p1.mask, npc.plays_list,
+                 p1.board,
                  npc.hits, size, p1.word_list, diff_score)
+        #p1.__dict__, npc.__dict__
+        #print(p1.__dict__, npc.__dict__)
 
         print(
             '\nCurrent intelligence status:\n' + full_board_formatter(p1.mask, npc.mask, p1.turn_score, npc.turn_score,
@@ -1121,3 +1174,7 @@ def one_game(required):
     ##----------------PRINT SCORE GRAPH----------------
     print('Decryption progression:')
     make_graph(p1.turn_percentage, npc.turn_percentage)
+    return p1.__dict__, npc.__dict__
+
+
+p1_vars, npc_vars = one_game(required)
