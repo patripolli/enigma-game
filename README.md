@@ -11,7 +11,7 @@ Python is available for Windows, Linux/UNIX and macOS, and can be downloaded at:
 
 # TO RUN:
 
-Simply run "Enigma.py" and READ THE PROMPTS.
+Simply run "enigma.py" and READ THE PROMPTS.
 
 There's a makeshift tutorial at the moment explaining the basic concepts, it will be a playable tutorial in the future.
 
