@@ -26,62 +26,10 @@ from PyDictionary import PyDictionary
 dictionary = PyDictionary()
 np.set_printoptions(threshold=np.inf)
 
-# We're lacking a tutorial, so here's some boards for explanation
-example_clean_board = np.array([['~', '~', '~', '~', '-', '~', '~', '~'],
-                                ['-', '~', '-', '-', '~', '-', '-', '~'],
-                                ['-', '~', '~', '-', '-', '~', '-', '-'],
-                                ['~', '-', '-', '-', '~', '-', '~', '~'],
-                                ['~', '-', '~', '-', '-', '-', '~', '-'],
-                                ['~', '-', '-', '-', '-', '~', '-', '-'],
-                                ['-', '~', '~', '-', '~', '~', '-', '~'],
-                                ['~', '-', '~', '-', '~', '~', '-', '~']], dtype='<U1')
-
-example_filled_board = np.array([['N', 'E', 'W', '~', '~', '-', '~', '~'],
-                                 ['-', '-', '~', '-', '~', 'B', '-', '~'],
-                                 ['~', 'B', 'L', 'U', 'E', 'E', '-', 'E'],
-                                 ['~', '~', '-', '~', '~', 'A', '-', 'X'],
-                                 ['~', '~', '~', '-', '-', 'C', '~', 'P'],
-                                 ['-', '-', '-', '-', '~', 'H', '-', 'E'],
-                                 ['~', '~', '~', '~', '~', '-', '-', 'C'],
-                                 ['~', '~', '-', '~', '-', '~', '~', 'T']], dtype='<U1')
-
-example_one_word = np.array([['B', 'U', 'Y', '~', '-', '~', '~', '~'],
-                             ['-', '~', '-', '-', '~', '-', '-', '~'],
-                             ['-', '~', '~', '-', '-', '~', '-', '-'],
-                             ['~', '-', '-', '-', '~', '-', '~', '~'],
-                             ['~', '-', '~', '-', '-', '-', '~', '-'],
-                             ['~', '-', '-', '-', '-', '~', '-', '-'],
-                             ['-', '~', '~', '-', '~', '~', '-', '~'],
-                             ['~', '-', '~', '-', '~', '~', '-', '~']], dtype='<U1')
-
-example_full_formatted = ('\n               Y O U                    |                  E N E M Y             \n'
-                          '    1   2   3   4   5   6   7   8       |        1   2   3   4   5   6   7   8   \n'
-                          '  —————————————————————————————————     |      ————————————————————————————————— \n'
-                          'A | -   ~   ~   ~   ~   -   ~   ~ |     |    A | -   ~   ~   ~   ~   -   ~   ~ |\n'
-                          '  |                               |     |      |                               | \n'
-                          'B | -   -   ~   -   ~   -   -   ~ |     |    B | -   -   ~   -   ~   -   -   ~ |\n'
-                          '  |                               |     |      |                               | \n'
-                          'C | ~   ~   -   -   ~   ~   -   - |     |    C | ~   ~   -   -   ~   ~   -   - |\n'
-                          '  |                               |     |      |                               | \n'
-                          'D | ~   ~   -   ~   ~   ~   -   ~ |     |    D | ~   ~   -   ~   ~   ~   -   ~ |\n'
-                          '  |                               |     |      |                               | \n'
-                          'E | ~   ~   ~   -   -   ~   ~   ~ |     |    E | ~   ~   ~   -   -   ~   ~   ~ |\n'
-                          '  |                               |     |      |                               | \n'
-                          'F | -   -   -   -   ~   ~   -   - |     |    F | -   -   -   -   ~   ~   -   - |\n'
-                          '  |                               |     |      |                               | \n'
-                          'G | ~   ~   ~   ~   ~   -   -   ~ |     |    G | ~   ~   ~   ~   ~   -   -   ~ |\n'
-                          '  |                               |     |      |                               | \n'
-                          'H | ~   ~   -   ~   -   ~   ~   ~ |     |    H | ~   ~   -   ~   -   ~   ~   ~ |\n'
-                          '  —————————————————————————————————     |      ————————————————————————————————— \n'
-                          'Enemy decryption progress: 0%            Your decryption progress: 0%\n'
-                          '[▯▯▯▯▯▯▯▯▯▯]                         [▯▯▯▯▯▯▯▯▯▯]\n')
-
 # ---------------GLOBAL VARIABLES--------------
 new_words = []
 required = 3
 turn_numbers = []
-year, month, day = datetime.date.today().year, datetime.date.today().month, datetime.date.today().day
-hour, minute, second = datetime.datetime.now().hour, datetime.datetime.now().minute, datetime.datetime.now().second
 
 # ---------------BOARD BUILDING, DIFFICULTY AND SCORE GRAPH FUNCTIONS---------------
 
@@ -314,13 +262,17 @@ def log_ask(log_qstn, p1_dict, npc_dict):
         log_qstn = input("Save game log? (PLEASE DO if something didn't work!!\nType Y/y, Yes or hit Enter to confirm. "
                          "Other commands will reset the parameters.\n").upper()
     if log_qstn == '' or log_qstn.upper() == 'Y' or log_qstn.upper() == 'YES':
+
         print(f"VARIABLES LOG\n\nP1\nNPC\n\nLOGS PULLED\n\nCREATING FILE...")
-        logfile = open(f"{p1_dict.get('name')}'s Match on {year}_{month}_{day} at {hour}h{minute}min{second}sec.txt", 'a')
+        year, month, day = datetime.date.today().year, datetime.date.today().month, datetime.date.today().day
+        hour, minute, second = datetime.datetime.now().hour, datetime.datetime.now().minute, datetime.datetime.now().second
+        logfile = open(f"{p1_dict.get('name')}'s Match on {year}_{month}_{day} at {hour}h{minute}min{second}sec.txt",
+                       'a')
         logfile.write(f"---Match Variables---\n\n"
                       f"Match start: {hour}:{minute}:{second}\n\n"
                       f"P1:\n\n{p1_dict}\n"
                       f"NPC\n{npc_dict}\n\n"
-                      f"Match end: {datetime.datetime.now().strftime('%H:%M.%S')}\n\n"
+                      f"Match end: {datetime.datetime.now().strftime('%H:%M:%S')}\n\n"
                       f"---END LOG")
         logfile.close()
         return print("LOG FILE CREATED.")
@@ -587,7 +539,7 @@ def play_letter(mask, rowcol_moves, plays_list, board, hits, p1, npc):
     letterrow = []
     rowcolumn = ''
     input_prompt = (f"Choose Letter + Row/Column with 'in' (e.g AinA, AinD, Ain3, Ain12):          "
-                          f"(Enter 'exit' to write a log and end the match. Enter 'debug' to print the log)\n")
+                    f"(Enter 'exit' to write a log and end the match. Enter 'debug' to print the log)\n")
     while fullcheck < 3:
         fullcoord = input(input_prompt)
         log_in_turn(fullcoord)
@@ -1175,6 +1127,3 @@ def one_game(required):
     print('Decryption progression:')
     make_graph(p1.turn_percentage, npc.turn_percentage)
     return p1.__dict__, npc.__dict__
-
-
-p1_vars, npc_vars = one_game(required)
