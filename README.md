@@ -13,7 +13,7 @@ Python is available for Windows, Linux/UNIX and macOS, and can be downloaded at:
 
 Simply run "enigma.py" and READ THE PROMPTS.
 
-There's a makeshift tutorial at the moment explaining the basic concepts, it will be a playable tutorial in the future.
+There's a playable tutorial before the match. It's skippable if you already know how to play.
 
 
 # DESCRIPTION
@@ -25,4 +25,4 @@ The most important information is that PLAYS WORK ON ENTIRE ROWS/COLUMNS. Just k
 
 Have fun!
 
-(Please tell me if anything breaks)
+Please save and send me the log if anything breaks.
